@@ -1,2 +1,0 @@
-# symfetch
-rustic fetch
