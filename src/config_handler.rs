@@ -126,8 +126,7 @@ impl ImageConfig {
     }
 
     pub fn get_render_options(&self) -> RenderOptions<'static> {
-        let colored = Some(self.colored);
-
+        let colored = self.colored.unwrap_or(false);
         if let Some(width) = self.width {
             if let Some(height) = self.height {
                 RenderOptions::new()
