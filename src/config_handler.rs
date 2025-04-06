@@ -1,4 +1,4 @@
-use std::{env, path::PathBuf, process::exit};
+use std::{env, path::Path, path::PathBuf, process::exit};
 
 use serde_derive::Deserialize;
 
@@ -32,12 +32,12 @@ pub fn parse_config(config_path: &PathBuf) -> Result<Config, toml::de::Error> {
     Ok(config)
 }
 
-pub fn get_ascii(path: &PathBuf) -> Result<String, std::io::Error> {
+pub fn get_ascii(path: &Path) -> Result<String, std::io::Error> {
     let path = get_ascii_path(path);
     std::fs::read_to_string(&path)
 }
 
-pub fn get_ascii_path(path: &PathBuf) -> PathBuf {
+pub fn get_ascii_path(path: &Path) -> PathBuf {
     let xdg_config_home = PathBuf::from(env::var("XDG_CONFIG_HOME").expect("HOME not set"));
 
     if path.to_str().unwrap().contains("~/.config/") {
@@ -45,6 +45,6 @@ pub fn get_ascii_path(path: &PathBuf) -> PathBuf {
         let sub_path = PathBuf::from(path_str.replace("~/.config/", ""));
         xdg_config_home.join(&sub_path)
     } else {
-        path.clone()
+        path.to_path_buf()
     }
 }
