@@ -1,7 +1,11 @@
 use clap::{arg, command, value_parser};
+use config_handler::Config;
+use data::Data;
 use std::{env, path::PathBuf};
 
 mod config_handler;
+mod data;
+mod util;
 
 fn main() {
     let matches = command!()
@@ -22,7 +26,10 @@ fn main() {
             PathBuf::from(format!("{}/.config/symfetch.toml", home))
         });
 
-    let cfg = config_handler::parse_config(&config_path).unwrap();
-    let ascii = config_handler::get_ascii(&cfg.ascii.path).unwrap();
-    println!("{}", ascii);
+    let config = Config::new(&config_path).unwrap();
+    let data = Data::new(config);
+
+    if data.config.ascii.is_some() {
+        data.render_ascii();
+    }
 }
