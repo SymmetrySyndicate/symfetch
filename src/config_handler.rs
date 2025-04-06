@@ -1,10 +1,58 @@
-use std::{env, path::Path, path::PathBuf, process::exit};
+use std::{path::PathBuf, process::exit};
 
 use serde_derive::Deserialize;
 
+use crate::util::path_utils::get_path;
+
 #[derive(Deserialize, Debug)]
 pub struct Config {
-    pub ascii: AsciiConfig,
+    pub ascii: Option<AsciiConfig>,
+    pub image: Option<ImageConfig>,
+}
+
+impl Config {
+    /// Creates a new `Config` instance.
+    ///
+    /// # Arguments
+    /// * `config_path` - The path to the configuration file.
+    ///
+    /// # Returns
+    /// * `Result<Self, toml::de::Error>` - The parsed configuration or an error.
+    pub fn new(config_path: &PathBuf) -> Result<Self, toml::de::Error> {
+        let contents = match std::fs::read_to_string(config_path) {
+            Ok(contents) => contents,
+            Err(err) => {
+                eprintln!("Failed to read config file: {}", err);
+                exit(1);
+            }
+        };
+
+        let config: Config = match toml::from_str(&contents) {
+            Ok(config) => config,
+            Err(err) => {
+                eprintln!("Failed to parse config file: {}", err);
+                exit(1);
+            }
+        };
+
+        match (&config.ascii, &config.image) {
+            (Some(_), Some(_)) => {
+                eprintln!(
+                    "Config error: Both 'ascii' and 'image' are defined. Only one must be specified."
+                );
+                exit(1);
+            }
+            (None, None) => {
+                eprintln!(
+                    "Config error: Neither 'ascii' nor 'image' is defined. One must be specified."
+                );
+                exit(1);
+            }
+            _ => {}
+        }
+
+        Ok(config)
+    }
 }
 
 #[derive(Deserialize, Debug)]
@@ -12,62 +60,54 @@ pub struct AsciiConfig {
     pub path: PathBuf,
 }
 
-pub fn parse_config(config_path: &PathBuf) -> Result<Config, toml::de::Error> {
-    let contents = match std::fs::read_to_string(config_path) {
-        Ok(contents) => contents,
-        Err(err) => {
-            eprintln!("Failed to read config file: {}", err);
-            exit(1);
-        }
-    };
-
-    let config: Config = match toml::from_str(&contents) {
-        Ok(config) => config,
-        Err(err) => {
-            eprintln!("Failed to parse config file: {}", err);
-            exit(1);
-        }
-    };
-
-    Ok(config)
+impl AsciiConfig {
+    #[allow(dead_code)]
+    /// Creates a new `AsciiConfig` instance.
+    ///
+    /// # Arguments
+    /// * `path` - The path to the ASCII art file.
+    ///
+    /// # Returns
+    /// * `AsciiConfig` - The new `AsciiConfig` instance.
+    ///
+    /// ```
+    /// use std::{env, path::PathBuf};
+    /// use symfetch::config_handler::AsciiConfig;
+    ///
+    /// let ascii_path = PathBuf::from("~/.config/symfetch/ascii");
+    /// let ascii_config = AsciiConfig::new(ascii_path);
+    /// ```
+    pub fn new(path: PathBuf) -> Self {
+        let path = get_path(&path);
+        AsciiConfig { path }
+    }
 }
 
-pub fn get_ascii(path: &Path) -> Result<String, std::io::Error> {
-    let path = get_ascii_path(path);
-    std::fs::read_to_string(&path)
+#[allow(dead_code)]
+#[derive(Deserialize, Debug)]
+pub struct ImageConfig {
+    pub path: PathBuf,
 }
 
-/// Returns the path to the ASCII art file.
-///
-/// If the path starts with `~/.config/`, it will be replaced with the user's home directory.
-/// Otherwise, the path will be returned as is.
-///
-/// # Arguments
-/// * `path` - The path to the ASCII art file.
-///
-/// # Returns
-/// * `PathBuf` - The path to the ASCII art file.
-///
-/// ```
-/// use std::{env, path::PathBuf};
-/// use symfetch::config_handler::get_ascii_path;
-///
-/// let ascii_path = get_ascii_path(&PathBuf::from("~/.config/symfetch/ascii"));
-///
-/// let home = PathBuf::from(env::var("HOME").unwrap());
-/// let path = home.join(".config/symfetch/ascii");
-/// assert_eq!(ascii_path, path);
-/// ```
-pub fn get_ascii_path(path: &Path) -> PathBuf {
-    let mut config_home =
-        PathBuf::from(env::var("HOME").expect("Environment variable HOME not set"));
-    config_home = config_home.join(".config");
-
-    if path.to_str().unwrap().contains("~/.config/") {
-        let path_str = path.to_str().unwrap();
-        let sub_path = PathBuf::from(path_str.replace("~/.config/", ""));
-        config_home.join(&sub_path)
-    } else {
-        path.to_path_buf()
+impl ImageConfig {
+    #[allow(dead_code)]
+    /// Creates a new `ImageConfig` instance.
+    ///
+    /// # Arguments
+    /// * `path` - The path to the image file.
+    ///
+    /// # Returns
+    /// * `ImageConfig` - The new `ImageConfig` instance.
+    ///
+    /// ```
+    /// use std::{env, path::PathBuf};
+    /// use symfetch::config_handler::ImageConfig;
+    ///
+    /// let image_path = PathBuf::from("~/.config/symfetch/image");
+    /// let image_config = ImageConfig::new(image_path);
+    /// ```
+    pub fn new(path: PathBuf) -> Self {
+        let path = get_path(&path);
+        ImageConfig { path }
     }
 }

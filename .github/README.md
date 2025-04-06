@@ -14,6 +14,5 @@ symfetch
 symfetch -c ~/symfetch.toml
 ```
 
-
 ## References
 * https://github.com/LivacoNew/CrabFetch/
