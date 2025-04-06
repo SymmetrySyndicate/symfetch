@@ -14,9 +14,15 @@ fn main() {
         )
         .get_matches();
 
-    if let Some(config_path) = matches.get_one::<PathBuf>("config") {
-        let cfg = config_handler::parse_config(config_path).unwrap();
-        let ascii = config_handler::get_ascii(&cfg.ascii.path).unwrap();
-        println!("{}", ascii);
-    }
+    let config_path = matches
+        .get_one::<PathBuf>("config")
+        .cloned()
+        .unwrap_or_else(|| {
+            let home = env::var("HOME").expect("Environment variable $HOME not set");
+            PathBuf::from(format!("{}/.config/symfetch.toml", home))
+        });
+
+    let cfg = config_handler::parse_config(&config_path).unwrap();
+    let ascii = config_handler::get_ascii(&cfg.ascii.path).unwrap();
+    println!("{}", ascii);
 }
