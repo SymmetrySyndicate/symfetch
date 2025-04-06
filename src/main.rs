@@ -32,4 +32,8 @@ fn main() {
     if data.config.ascii.is_some() {
         data.render_ascii();
     }
+
+    if data.config.image.is_some() {
+        data.render_image();
+    }
 }

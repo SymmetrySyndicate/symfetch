@@ -1,5 +1,6 @@
 use std::{path::PathBuf, process::exit};
 
+use rascii_art::RenderOptions;
 use serde_derive::Deserialize;
 
 use crate::util::path_utils::get_path;
@@ -87,6 +88,9 @@ impl AsciiConfig {
 #[derive(Deserialize, Debug)]
 pub struct ImageConfig {
     pub path: PathBuf,
+    pub width: Option<u32>,
+    pub height: Option<u32>,
+    pub colored: Option<bool>,
 }
 
 impl ImageConfig {
@@ -104,10 +108,40 @@ impl ImageConfig {
     /// use symfetch::config_handler::ImageConfig;
     ///
     /// let image_path = PathBuf::from("~/.config/symfetch/image");
-    /// let image_config = ImageConfig::new(image_path);
+    /// let image_config = ImageConfig::new(image_path, None, None, None);
     /// ```
-    pub fn new(path: PathBuf) -> Self {
+    pub fn new(
+        path: PathBuf,
+        width: Option<u32>,
+        height: Option<u32>,
+        colored: Option<bool>,
+    ) -> Self {
         let path = get_path(&path);
-        ImageConfig { path }
+        ImageConfig {
+            path,
+            width,
+            height,
+            colored,
+        }
+    }
+
+    pub fn get_render_options(&self) -> RenderOptions<'static> {
+        let colored = Some(self.colored);
+
+        if let Some(width) = self.width {
+            if let Some(height) = self.height {
+                RenderOptions::new()
+                    .width(width)
+                    .height(height)
+                    .colored(colored.is_some())
+            } else {
+                RenderOptions::new().width(width).colored(colored.is_some())
+            }
+        } else {
+            RenderOptions::new()
+                .width(self.width.unwrap_or(100))
+                .height(self.height.unwrap_or(100))
+                .colored(self.colored.unwrap_or(false))
+        }
     }
 }

@@ -1,3 +1,8 @@
+use std::io;
+
+use image::io::Reader as ImageReader;
+use rascii_art::render_image;
+
 use crate::config_handler::Config;
 use crate::util::path_utils::get_path;
 
@@ -17,6 +22,26 @@ impl Data {
             println!("{}", ascii_content);
         } else {
             eprintln!("No ASCII config found. Skipping ASCII rendering.");
+        }
+    }
+
+    pub fn render_image(&self) {
+        if let Some(image_config) = &self.config.image {
+            let image_path = get_path(&image_config.path);
+            let image = ImageReader::open(image_path)
+                .unwrap()
+                .with_guessed_format()
+                .unwrap()
+                .decode()
+                .unwrap();
+            let render_options = image_config.get_render_options();
+
+            let stdout = io::stdout();
+            let mut buffer = stdout.lock();
+
+            render_image(&image, &mut buffer, &render_options).unwrap();
+        } else {
+            eprintln!("No image config found. Skipping image rendering.");
         }
     }
 }
