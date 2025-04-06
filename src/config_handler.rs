@@ -127,14 +127,15 @@ impl ImageConfig {
 
     pub fn get_render_options(&self) -> RenderOptions<'static> {
         let colored = self.colored.unwrap_or(false);
+
         if let Some(width) = self.width {
             if let Some(height) = self.height {
                 RenderOptions::new()
                     .width(width)
                     .height(height)
-                    .colored(colored.is_some())
+                    .colored(colored)
             } else {
-                RenderOptions::new().width(width).colored(colored.is_some())
+                RenderOptions::new().width(width).colored(colored)
             }
         } else {
             RenderOptions::new()
