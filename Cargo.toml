@@ -11,5 +11,5 @@ serde_derive = "1.0.219"
 toml = "0.8.20"
 
 # same as rascii_art
-image = "0.24.9"
+image = "0.25.6"
 rascii_art = "0.4.5"
