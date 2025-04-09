@@ -3,24 +3,24 @@ use std::{
     path::{Path, PathBuf},
 };
 
-/// Returns the path to the ASCII art file.
-///
-/// If the path starts with `~/.config/`, it will be replaced with the user's home directory.
-/// Otherwise, the path will be returned as is.
+/// If the path starts with `~/.config/`, it will be prepended with the user's
+/// home directory. Otherwise, the path will be returned as is.
 ///
 /// # Arguments
-/// * `path` - The path to the ASCII art file.
+/// * `path` - path to sanitize
 ///
 /// # Returns
-/// * `PathBuf` - The path to the ASCII art file.
+/// * `PathBuf` - sanitized path
 ///
 /// ```
 /// use std::{env, path::PathBuf};
 /// use symfetch::util::path_utils::get_path;
 ///
+/// // user might provide something like this
 /// let ascii_path = PathBuf::from("~/.config/symfetch/ascii");
 /// let ascii_path = get_path(&ascii_path);
 ///
+/// // what we want
 /// let home = PathBuf::from(env::var("HOME").unwrap());
 /// let path = home.join(".config/symfetch/ascii");
 /// assert_eq!(ascii_path, path);

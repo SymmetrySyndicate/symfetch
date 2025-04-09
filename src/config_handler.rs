@@ -1,3 +1,4 @@
+//! parse and process configuration
 use std::{path::PathBuf, process::exit};
 
 use rascii_art::RenderOptions;
@@ -5,6 +6,10 @@ use serde_derive::Deserialize;
 
 use crate::util::path_utils::get_path;
 
+/// core struct to store data parsed from the configuration file
+///
+/// NOTE: Notice how `ascii` and `image` are an [`Option`] i.e. one can provide
+/// either or None
 #[derive(Deserialize, Debug)]
 pub struct Config {
     pub ascii: Option<AsciiConfig>,
@@ -19,6 +24,27 @@ impl Config {
     ///
     /// # Returns
     /// * `Result<Self, toml::de::Error>` - The parsed configuration or an error.
+    ///
+    /// # Examples
+    /// Let's say your configuration file looks like this
+    ///
+    /// ```toml
+    /// [ascii]
+    /// path="ascii"
+    /// ```
+    /// i.e. you want to show some ASCII art saved in some file at path `ascii`
+    ///
+    /// You can access the path as follows
+    ///
+    /// ```
+    /// use std::path::PathBuf;
+    /// use symfetch::config_handler::Config;
+    ///
+    /// let config = Config::new(&PathBuf::from("tests/only_ascii.toml")).unwrap();
+    /// let ascii_config = &config.ascii.as_ref().unwrap();
+    ///
+    /// assert_eq!(&ascii_config.path, &PathBuf::from("ascii"));
+    /// ```
     pub fn new(config_path: &PathBuf) -> Result<Self, toml::de::Error> {
         let contents = match std::fs::read_to_string(config_path) {
             Ok(contents) => contents,
@@ -56,6 +82,7 @@ impl Config {
     }
 }
 
+/// store parsed information from the "\[ascii\]" table
 #[derive(Deserialize, Debug)]
 pub struct AsciiConfig {
     pub path: PathBuf,
@@ -70,26 +97,26 @@ impl AsciiConfig {
     ///
     /// # Returns
     /// * `AsciiConfig` - The new `AsciiConfig` instance.
-    ///
-    /// ```
-    /// use std::{env, path::PathBuf};
-    /// use symfetch::config_handler::AsciiConfig;
-    ///
-    /// let ascii_path = PathBuf::from("~/.config/symfetch/ascii");
-    /// let ascii_config = AsciiConfig::new(ascii_path);
-    /// ```
     pub fn new(path: PathBuf) -> Self {
         let path = get_path(&path);
         AsciiConfig { path }
     }
 }
 
+/// store parsed information from the "\[image\]" table
 #[allow(dead_code)]
 #[derive(Deserialize, Debug)]
 pub struct ImageConfig {
+    /// The path to the image file.
     pub path: PathBuf,
+
+    /// width parameter for [`RenderOptions`]
     pub width: Option<u32>,
+
+    /// height parameter for [`RenderOptions`]
     pub height: Option<u32>,
+
+    /// colored parameter for [`RenderOptions`]
     pub colored: Option<bool>,
 }
 
@@ -125,6 +152,10 @@ impl ImageConfig {
         }
     }
 
+    /// create [`RenderOptions`] for calling `rascii_art::render_image`
+    ///
+    /// if while creating a [`ImageConfig`] instance, the `width`, `height` and `colored`
+    /// parameters are not provided, the default values of 100, 100 and false are used.
     pub fn get_render_options(&self) -> RenderOptions<'static> {
         let colored = self.colored.unwrap_or(false);
 
