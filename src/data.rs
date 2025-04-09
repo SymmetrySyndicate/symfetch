@@ -1,3 +1,4 @@
+//! the main engine
 use std::io;
 
 use image::io::Reader as ImageReader;
@@ -6,8 +7,10 @@ use rascii_art::render_image;
 use crate::config_handler::Config;
 use crate::util::path_utils::get_path;
 
+/// holds information about config (+ system data)
 #[derive(Debug)]
 pub struct Data {
+    /// parsed information from config
     pub config: Config,
 }
 
@@ -16,6 +19,7 @@ impl Data {
         Self { config }
     }
 
+    /// If ASCII configuration is provided, write to stdout
     pub fn render_ascii(&self) {
         if let Some(ascii_config) = &self.config.ascii {
             let ascii_content = std::fs::read_to_string(get_path(&ascii_config.path)).unwrap();
@@ -25,6 +29,9 @@ impl Data {
         }
     }
 
+    /// If image configuration is provided, render image to stdout
+    ///
+    /// NOTE: uses [`rascii_art::render_image`]
     pub fn render_image(&self) {
         if let Some(image_config) = &self.config.image {
             let image_path = get_path(&image_config.path);
