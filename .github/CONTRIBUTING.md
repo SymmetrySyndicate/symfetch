@@ -11,3 +11,17 @@
 ## Advice for the developer
 
 * We have a `.pre-commit-config.yaml` file that you can use for general code sanitization.
+* You can use the following zed configuration file to set up your development environment:
+```JSON
+{
+  "lsp": {
+    "rust-analyzer": {
+      "initialization_options": {
+        "cargo": {
+          "features": ["image-to-ascii", "image"]
+        }
+      }
+    }
+  }
+}
+```
