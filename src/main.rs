@@ -7,6 +7,7 @@ mod config_handler;
 mod data;
 mod util;
 
+#[allow(unused_variables)]
 fn main() {
     let matches = command!()
         .arg(
@@ -33,7 +34,12 @@ fn main() {
         data.render_ascii();
     }
 
-    if data.config.image.is_some() {
-        data.render_image();
+    if let Some(image_config) = &data.config.image {
+        #[cfg(feature = "image-to-ascii")]
+        if image_config.as_ascii.is_some() {
+            data.render_image_as_ascii();
+        } else {
+            data.render_image();
+        }
     }
 }

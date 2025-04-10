@@ -1,8 +1,13 @@
 //! parse and process configuration
 use std::{path::PathBuf, process::exit};
 
+#[cfg(feature = "image-to-ascii")]
 use rascii_art::RenderOptions;
+
 use serde_derive::Deserialize;
+
+#[cfg(feature = "image")]
+use viuer::Config as ViuerConfig;
 
 use crate::util::path_utils::get_path;
 
@@ -118,6 +123,9 @@ pub struct ImageConfig {
 
     /// colored parameter for [`RenderOptions`]
     pub colored: Option<bool>,
+
+    /// boolean parameter controlling ASCII conversion
+    pub as_ascii: Option<bool>,
 }
 
 impl ImageConfig {
@@ -135,13 +143,14 @@ impl ImageConfig {
     /// use symfetch::config_handler::ImageConfig;
     ///
     /// let image_path = PathBuf::from("~/.config/symfetch/image");
-    /// let image_config = ImageConfig::new(image_path, None, None, None);
+    /// let image_config = ImageConfig::new(image_path, None, None, None, None);
     /// ```
     pub fn new(
         path: PathBuf,
         width: Option<u32>,
         height: Option<u32>,
         colored: Option<bool>,
+        as_ascii: Option<bool>,
     ) -> Self {
         let path = get_path(&path);
         ImageConfig {
@@ -149,6 +158,20 @@ impl ImageConfig {
             width,
             height,
             colored,
+            as_ascii,
+        }
+    }
+
+    /// create [`ViuerConfig`] for calling `viuer::print`
+    ///
+    /// if while creating a [`ImageConfig`] instance, the `width` and `height`
+    /// parameters are not provided, the default values are used.
+    #[cfg(feature = "image")]
+    pub fn get_viuer_config(&self) -> ViuerConfig {
+        ViuerConfig {
+            width: self.width,
+            height: self.height,
+            ..Default::default()
         }
     }
 
@@ -156,6 +179,7 @@ impl ImageConfig {
     ///
     /// if while creating a [`ImageConfig`] instance, the `width`, `height` and `colored`
     /// parameters are not provided, the default values of 100, 100 and false are used.
+    #[cfg(feature = "image-to-ascii")]
     pub fn get_render_options(&self) -> RenderOptions<'static> {
         let colored = self.colored.unwrap_or(false);
 
