@@ -8,3 +8,6 @@ target/
 
 # Added by cargo
 /target
+
+# OS Specific files
+**/*.DS_Store
