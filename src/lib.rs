@@ -34,7 +34,11 @@
 //!
 //! ```toml
 //! [image]
-//! path="image"
+//! path="image.png"
+//! # Optional: as_ascii = false
+//! # Optional: height = 20
+//! # Optional: width = 160
+//! # Optional: colored = true
 //! ```
 //!
 //! ## Brought to you by

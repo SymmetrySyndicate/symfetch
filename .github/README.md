@@ -1,7 +1,5 @@
 [![Rust Build and Tests](https://github.com/SymmetrySyndicate/symfetch/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/SymmetrySyndicate/symfetch/actions/workflows/ci.yml)
 
-rustic fetch
-
 ## Usage
 
 ```
