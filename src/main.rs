@@ -38,7 +38,11 @@ fn main() {
         #[cfg(feature = "image-to-ascii")]
         if image_config.as_ascii.is_some() {
             data.render_image_as_ascii();
-        } else {
+        }
+
+        #[cfg(feature = "image")]
+        {
+            println!("rendering image as image");
             data.render_image();
         }
     }
