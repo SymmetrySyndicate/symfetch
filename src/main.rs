@@ -42,7 +42,6 @@ fn main() {
 
         #[cfg(feature = "image")]
         {
-            println!("rendering image as image");
             data.render_image();
         }
     }
