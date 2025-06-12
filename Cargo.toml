@@ -9,6 +9,10 @@ clap = { version = "4.5.36", features = ["cargo"] }
 serde = "1.0.219"
 serde_derive = "1.0.219"
 toml = "0.8.20"
+sysinfo = "0.35"
+chrono = { version = "0.4", features = ["serde"] }
+whoami = "1.5"
+colored = "2.1"
 
 image = { version = "0.24.9", optional = true }
 rascii_art = { version = "0.4.5", optional = true }
