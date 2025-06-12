@@ -16,6 +16,7 @@ use image_025::ImageReader as ImageReader025;
 use viuer::print;
 
 use crate::config_handler::Config;
+use crate::system_info::SystemInfo;
 use crate::util::path_utils::get_path;
 
 /// holds information about config (+ system data)
@@ -81,5 +82,19 @@ impl Data {
                 .unwrap();
             print(&image, &viuer_config).expect("Image printing failed.");
         }
+    }
+
+    pub fn ascii_lines(&self) -> Option<Vec<String>> {
+        if let Some(ascii_config) = &self.config.ascii {
+            let ascii_content = std::fs::read_to_string(get_path(&ascii_config.path)).ok()?;
+            Some(ascii_content.lines().map(|l| l.to_string()).collect())
+        } else {
+            None
+        }
+    }
+
+    pub fn system_info_lines(&self) -> Vec<String> {
+        let system_info = SystemInfo::new();
+        system_info.render_lines()
     }
 }

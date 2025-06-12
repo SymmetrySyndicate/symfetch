@@ -46,4 +46,5 @@
 //! ![](https://github.com/SymmetrySyndicate/.github/blob/main/assets/banner/twitter_banner.png?raw=true)
 pub mod config_handler;
 pub mod data;
+pub mod system_info;
 pub mod util;
