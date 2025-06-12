@@ -6,9 +6,6 @@ use rascii_art::RenderOptions;
 
 use serde_derive::Deserialize;
 
-#[cfg(feature = "image")]
-use viuer::Config as ViuerConfig;
-
 use crate::util::path_utils::get_path;
 
 /// core struct to store data parsed from the configuration file
@@ -54,7 +51,7 @@ impl Config {
         let contents = match std::fs::read_to_string(config_path) {
             Ok(contents) => contents,
             Err(err) => {
-                eprintln!("Failed to read config file: {}", err);
+                eprintln!("Failed to read config file: {err}");
                 exit(1);
             }
         };
@@ -62,7 +59,7 @@ impl Config {
         let config: Config = match toml::from_str(&contents) {
             Ok(config) => config,
             Err(err) => {
-                eprintln!("Failed to parse config file: {}", err);
+                eprintln!("Failed to parse config file: {err}");
                 exit(1);
             }
         };
@@ -159,19 +156,6 @@ impl ImageConfig {
             height,
             colored,
             as_ascii,
-        }
-    }
-
-    /// create [`ViuerConfig`] for calling `viuer::print`
-    ///
-    /// if while creating a [`ImageConfig`] instance, the `width` and `height`
-    /// parameters are not provided, the default values are used.
-    #[cfg(feature = "image")]
-    pub fn get_viuer_config(&self) -> ViuerConfig {
-        ViuerConfig {
-            width: self.width,
-            height: self.height,
-            ..Default::default()
         }
     }
 

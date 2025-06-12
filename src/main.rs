@@ -25,7 +25,7 @@ fn main() {
         .cloned()
         .unwrap_or_else(|| {
             let home = env::var("HOME").expect("Environment variable $HOME not set");
-            PathBuf::from(format!("{}/.config/symfetch.toml", home))
+            PathBuf::from(format!("{home}/.config/symfetch.toml"))
         });
 
     let config = Config::new(&config_path).unwrap();

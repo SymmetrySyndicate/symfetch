@@ -2,7 +2,6 @@ use chrono::{DateTime, Local};
 use colored::*;
 use std::env;
 use sysinfo::{Disks, System};
-use whoami;
 
 pub struct SystemInfo {
     pub user: String,
@@ -50,14 +49,14 @@ impl SystemInfo {
         let shell = env::var("SHELL")
             .unwrap_or_else(|_| "Unknown".to_string())
             .split('/')
-            .last()
+            .next_back()
             .unwrap_or("Unknown")
             .to_string();
 
-        // Displays (simplified - just count)
-        let displays = "1".to_string(); // This would need more complex detection
+        // TODO: Displays detection
+        let displays = "1".to_string();
 
-        // Window Manager
+        // TODO: Window Manager detection
         let window_manager = env::var("XDG_CURRENT_DESKTOP")
             .or_else(|_| env::var("DESKTOP_SESSION"))
             .unwrap_or_else(|_| "Unknown".to_string());
@@ -65,8 +64,8 @@ impl SystemInfo {
         // Terminal
         let terminal = env::var("TERM").unwrap_or_else(|_| "Unknown".to_string());
 
-        // Font (simplified)
-        let font = "Unknown".to_string(); // This would need font detection
+        // TODO: Font detection
+        let font = "Unknown".to_string();
 
         // CPU
         let cpu_info = if let Some(cpu) = sys.cpus().first() {
@@ -75,8 +74,8 @@ impl SystemInfo {
             "Unknown".to_string()
         };
 
-        // GPU (simplified - would need more complex detection)
-        let gpu = "Unknown".to_string(); // This would need GPU detection
+        // TODO: GPU detection
+        let gpu = "Unknown".to_string();
 
         // Memory
         let total_memory = sys.total_memory();
@@ -119,7 +118,7 @@ impl SystemInfo {
         }
     }
 
-    pub fn render_lines(&self) -> Vec<String> {
+    pub fn as_vec(&self) -> Vec<String> {
         let mut lines = Vec::new();
         // Header
         lines.push(format!(
@@ -128,8 +127,9 @@ impl SystemInfo {
             self.hostname.bold().cyan(),
             self.datetime.format("%m/%d/%y %H:%M").to_string().dimmed()
         ));
+
         lines.push(String::new());
-        // Info lines with colored labels
+
         lines.push(format!("{} {}", "OS:".bold().yellow(), self.os_info));
         lines.push(format!("{} {}", "Uptime:".bold().yellow(), self.uptime));
         lines.push(format!("{} {}", "Shell:".bold().yellow(), self.shell));
@@ -142,5 +142,11 @@ impl SystemInfo {
         lines.push(format!("{} {}", "Memory:".bold().yellow(), self.memory));
         lines.push(format!("{} {}", "Storage:".bold().yellow(), self.storage));
         lines
+    }
+}
+
+impl Default for SystemInfo {
+    fn default() -> Self {
+        Self::new()
     }
 }
