@@ -23,3 +23,6 @@ image_025 = { package = "image", version = "0.25", optional = true }
 default = ["image"]
 image = ["dep:viuer", "dep:image_025"]
 image-to-ascii = ["dep:rascii_art", "dep:image"]
+
+[package.metadata.feature-conflict]
+"image" = ["image-to-ascii"]
