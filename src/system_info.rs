@@ -56,7 +56,6 @@ impl SystemInfo {
         // TODO: Displays detection
         let displays = "1".to_string();
 
-        // TODO: Window Manager detection
         let window_manager = env::var("XDG_CURRENT_DESKTOP")
             .or_else(|_| env::var("DESKTOP_SESSION"))
             .unwrap_or_else(|_| "Unknown".to_string());
