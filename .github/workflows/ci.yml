@@ -21,15 +21,26 @@ env:
     CARGO_TERM_COLOR: always
 
 jobs:
-    build:
+    isolation_tests:
         runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                feature-set:
+                    - image
+                    - image-to-ascii
 
         steps:
-            - name: "Checkout"
+            - name: Checkout
               uses: actions/checkout@v4
 
-            - name: Build
-              run: cargo build --all-features
+            - name: Install Rust toolchain
+              uses: actions-rs/toolchain@v1
+              with:
+                  toolchain: stable
+                  override: true
 
-            - name: Run tests
-              run: cargo test
+            - name: Build with --features ${{ matrix.feature-set }}
+              run: cargo build --no-default-features --features "${{ matrix.feature-set }}"
+
+            - name: Test with --features ${{ matrix.feature-set }}
+              run: cargo test --no-default-features --features "${{ matrix.feature-set }}"
