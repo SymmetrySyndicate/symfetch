@@ -1,5 +1,18 @@
 //! symfetch
 //!
+//! ```text
+//!   ,-~~-.___.                                                | sauravmaheshkar@artemis.local (06/13/25 14:37)
+//!  / |  '     \         It was a dark and stormy night....    |
+//! (  )         0                                              | OS: macOS 15.5 Sequoia 24.5.0
+//!  \_/-, ,----'                                               | Uptime: 9d 23h 12m
+//!     ====             //                                     | Shell: zsh
+//!    /  \-'~;      /~~~(O)                                    | Displays: 1
+//!   /  __/~|     /       |                                    | Terminal: xterm-256color
+//! =(  _____|   (_________|   W<                               | CPU: Apple M1 (8 cores)
+//!                                                             | Memory: 5850MB / 8192MB
+//!                                                             | Storage: 266GB / 456GB
+//! ```
+//!
 //! ## Usage
 //!
 //! You can run the executable by simply calling the symfetch cmd.
