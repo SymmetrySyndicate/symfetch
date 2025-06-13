@@ -1,13 +1,16 @@
 //! the main engine
 
 #[cfg(feature = "image-to-ascii")]
-use std::io::Cursor;
+use image as image024;
+
+#[cfg(feature = "image-to-ascii")]
+use image024::io::Reader as ImageReader024;
 
 #[cfg(feature = "image-to-ascii")]
 use rascii_art::render_image;
 
-#[cfg(feature = "image-to-ascii")]
-use image::io::Reader as ImageReader024;
+#[cfg(feature = "image")]
+use image_025 as image;
 
 #[cfg(feature = "image")]
 use image::GenericImageView;
@@ -131,6 +134,8 @@ impl Data {
     #[cfg(feature = "image-to-ascii")]
     /// If image configuration is provided, render image as ASCII and return lines
     pub fn image_as_ascii_vec(&self) -> Option<Vec<String>> {
+        use std::io::Cursor;
+
         let image_config = self.config.image.as_ref()?;
         let image_path = get_path(&image_config.path);
         let image = ImageReader024::open(image_path)

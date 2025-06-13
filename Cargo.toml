@@ -14,14 +14,15 @@ chrono = { version = "0.4", features = ["serde"] }
 whoami = "1.5"
 colored = "2.1"
 
-image = { version = "0.25" }
+image = { version = "0.24.9", optional = true }
 rascii_art = { version = "0.4.5", optional = true }
 termimage = { version = "~1.2.0", optional = true }
+image_025 = { package = "image", version = "0.25", optional = true }
 
 [features]
 default = ["image"]
-image = [ "dep:termimage"]
-image-to-ascii = ["dep:rascii_art"]
+image = [ "dep:termimage", "dep:image_025"]
+image-to-ascii = ["dep:rascii_art", "dep:image"]
 
 [package.metadata.feature-conflict]
 "image" = ["image-to-ascii"]
