@@ -66,12 +66,12 @@ impl Data {
         }
 
         #[cfg(feature = "image")]
+        #[allow(clippy::collapsible_if)]
         {
-            if self.config.ascii.is_none()
-                && left_side_lines.is_empty()
-                && let Some(image_ansi_lines) = self.image_as_ansi_vec()
-            {
-                left_side_lines.extend(image_ansi_lines);
+            if self.config.ascii.is_none() && left_side_lines.is_empty() {
+                if let Some(image_ansi_lines) = self.image_as_ansi_vec() {
+                    left_side_lines.extend(image_ansi_lines);
+                }
             }
         }
 
