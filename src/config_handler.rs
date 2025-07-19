@@ -45,7 +45,7 @@ impl Config {
     /// let config = Config::new(&PathBuf::from("tests/only_ascii.toml")).unwrap();
     /// let ascii_config = &config.ascii.as_ref().unwrap();
     ///
-    /// assert_eq!(&ascii_config.path, &PathBuf::from("ascii"));
+    /// assert_eq!(&ascii_config.path, &PathBuf::from("tests/ascii"));
     /// ```
     pub fn new(config_path: &PathBuf) -> Result<Self, toml::de::Error> {
         let contents = match std::fs::read_to_string(config_path) {

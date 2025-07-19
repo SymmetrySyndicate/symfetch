@@ -1,0 +1,58 @@
+name: "write output to PR"
+
+permissions:
+  contents: read
+  pull-requests: write
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install Rust toolchain
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        override: true
+
+    - name: Build with ascii feature
+      run: cargo build
+
+    - name: Run symfetch with ascii config
+      run: |
+        ./target/debug/symfetch -c tests/only_ascii.toml > output.txt
+        echo "=== Symfetch Output ==="
+        cat output.txt
+        echo "======================="
+
+    - name: Comment PR with output
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          const output = fs.readFileSync('output.txt', 'utf8');
+
+          const comment = `## Symfetch Output
+
+          \`\`\`
+          ${output}
+          \`\`\`
+
+          Generated with config: \`tests/only_ascii.toml\``;
+
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: comment
+          });
